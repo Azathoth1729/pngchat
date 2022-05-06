@@ -12,7 +12,7 @@ use crate::Result;
 use crate::CHUNK_SIZE;
 
 /// A 4-byte chunk type code for PNG file
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy, Hash)]
 pub struct ChunkType(
     /// bytes encoding of chunk type
     pub [u8; CHUNK_SIZE],
@@ -29,18 +29,24 @@ impl ChunkType {
         (self.0)[index] as char
     }
 
+    /// Returns true if the chunk is critical.
+
     pub fn is_critical(&self) -> bool {
         self.at_char(0).is_uppercase()
     }
 
+    /// Returns true if the chunk is public.
     pub fn is_public(&self) -> bool {
         self.at_char(1).is_uppercase()
     }
 
+    /// Checks whether the reserved bit of the chunk name is set.
+    /// If it is set the chunk name is invalid.
     pub fn is_reserved_bit_valid(&self) -> bool {
         self.at_char(2).is_uppercase()
     }
 
+    /// Returns true if the chunk is safe to copy if unknown.
     pub fn is_safe_to_copy(&self) -> bool {
         self.at_char(3).is_lowercase()
     }
