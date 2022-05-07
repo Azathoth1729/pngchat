@@ -7,3 +7,4 @@ authors = ["Azathoth"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
+crc = "3.0"

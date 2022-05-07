@@ -1,15 +1,15 @@
-//! PNG files are essentially just a list of "chunks", each containing their own data.
+//! A 4-byte chunk type code.
 //!
-//! Each chunk has a type that can be represented as a 4 character string.
-
-//! See the [PNG file structure spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html) for more details
+//! For convenience in description and in examining PNG files,
+//! type codes are restricted to consist of uppercase and lowercase ASCII letters (A-Z and a-z, or 65-90 and 97-122 decimal).
+//!
+//! However, encoders and decoders must treat the codes as fixed binary values, not character strings.
+//! For example, it would not be correct to represent the type code IDAT by the EBCDIC equivalents of those letters.
 
 use std::fmt::Display;
 use std::str::{self, FromStr};
 
-use crate::Error;
-use crate::Result;
-use crate::CHUNK_SIZE;
+use crate::{Error, Result, CHUNK_SIZE};
 
 /// A 4-byte chunk type code for PNG file
 #[derive(PartialEq, Eq, Debug, Clone, Copy, Hash)]
