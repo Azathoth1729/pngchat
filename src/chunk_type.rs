@@ -15,16 +15,16 @@ use crate::{Error, Result, CHUNK_SIZE};
 #[derive(PartialEq, Eq, Debug, Clone, Copy, Hash)]
 pub struct ChunkType(
     /// bytes encoding of chunk type
-    pub [u8; CHUNK_SIZE],
+    [u8; CHUNK_SIZE],
 );
 
 impl ChunkType {
-    /// bytes representation for ChunkType
+    /// Bytes representation for ChunkType
     pub fn bytes(&self) -> [u8; CHUNK_SIZE] {
         self.0
     }
 
-    /// the char at certian index of ChunkType's bytes
+    /// The char at certian index of ChunkType's bytes
     fn at_char(&self, index: usize) -> char {
         (self.0)[index] as char
     }

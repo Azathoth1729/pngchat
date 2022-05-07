@@ -17,28 +17,22 @@
 
 use std::fmt::Display;
 
-use crate::ChunkType;
+use crate::{checksum_32, u8_4_from_slice, ChunkType};
 use crate::{Error, Result, CHUNK_SIZE};
 
-use crc::{Algorithm, Crc, CRC_32_ISO_HDLC};
+use crc::CRC_32_ISO_HDLC;
 
-///  Compute CRC32 using certian algorithm
-pub const fn checksum_32(algo: &'static Algorithm<u32>, bytes: &[u8]) -> u32 {
-    let crc = Crc::<u32>::new(&algo);
-    crc.checksum(bytes)
-}
-
-#[derive(Clone, Debug)]
 /// Chunk for a PNG file
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Chunk {
     /// A 4-byte unsigned integer giving the number of bytes in the chunk’s data field.
-    pub length: u32,
+    length: u32,
     /// A 4-byte chunk type code. [more](crate::ChunkType)
-    pub chunk_type: ChunkType,
+    chunk_type: ChunkType,
     /// The data bytes appropriate to the chunk type
-    pub chunk_data: Vec<u8>,
+    chunk_data: Vec<u8>,
     /// A 4-byte [CRC](https://www.wikiwand.com/en/Cyclic_redundancy_check) code for error-detecting
-    pub crc: u32,
+    crc: u32,
 }
 
 impl Chunk {
@@ -55,26 +49,32 @@ impl Chunk {
         }
     }
 
+    /// Return Length of chunk data
     pub fn length(&self) -> u32 {
         self.length
     }
 
+    /// Return Type of chunk
     pub fn chunk_type(&self) -> &ChunkType {
         &self.chunk_type
     }
 
+    /// Return Main Data of chunk
     pub fn data(&self) -> &[u8] {
         &self.chunk_data
     }
 
+    /// Return CRC checksum
     pub fn crc(&self) -> u32 {
         self.crc
     }
 
+    /// Return the data of chunk as Result<string>
     pub fn data_as_string(&self) -> Result<String> {
         String::from_utf8(self.data().to_vec()).map_err(|e| Error::from(e))
     }
 
+    /// Bytes representation for Chunk
     pub fn as_bytes(&self) -> Vec<u8> {
         [
             self.length.to_be_bytes().as_ref(),
@@ -86,23 +86,20 @@ impl Chunk {
     }
 }
 
-fn u8_4_from_slice(arr: &[u8]) -> [u8; CHUNK_SIZE] {
-    arr.try_into().expect("Invalid slice length")
-}
-
 impl TryFrom<&[u8]> for Chunk {
     type Error = Error<'static>;
 
     fn try_from(bytes: &[u8]) -> Result<Self> {
         let length = u32::from_be_bytes(u8_4_from_slice(&bytes[0..CHUNK_SIZE]));
 
-        if bytes.len() != (length + 3 * CHUNK_SIZE as u32) as usize {
+        if bytes.len() != (length as usize + 3 * CHUNK_SIZE) as usize {
             return Err(Error::Custom("Chunk contains incorrect length information"));
         }
 
-        let chunk_data = bytes[8..bytes.len() - 4].to_vec();
+        let chunk_type =
+            ChunkType::try_from(u8_4_from_slice(&bytes[CHUNK_SIZE..2 * CHUNK_SIZE])).unwrap();
 
-        let chunk_type = ChunkType::try_from(u8_4_from_slice(&bytes[4..8])).unwrap();
+        let chunk_data = bytes[2 * CHUNK_SIZE..bytes.len() - CHUNK_SIZE].to_vec();
 
         let crc = u32::from_be_bytes(u8_4_from_slice(
             &bytes[bytes.len() - CHUNK_SIZE..bytes.len()],
@@ -125,9 +122,10 @@ impl TryFrom<&[u8]> for Chunk {
 
 impl Display for Chunk {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Chunk\n{{\n")?;
         write!(
             f,
-            "\nlength: {}, chunk_type: {}\ndata:\n{:?}\ncrc: {}",
+            "\tlength: {}, chunk_type: {}\n\tdata: {:?}\n\tcrc: {}\n}}",
             self.length(),
             self.chunk_type(),
             self.data(),
@@ -141,6 +139,29 @@ mod tests {
     use super::*;
     use crate::chunk_type::ChunkType;
     use std::str::FromStr;
+
+    #[test]
+    fn crc_test() {
+        let crc = checksum_32(&CRC_32_ISO_HDLC, b"123456789");
+        println!("{:?}", crc);
+
+        assert_eq!(crc, 0xcbf43926);
+    }
+
+    #[test]
+    fn crc_test2() {
+        let chunk_type = "RuSt";
+        let message_bytes = "This is where your secret message will be!".as_bytes();
+
+        let crc: u32 = 2882656334;
+        let checked = checksum_32(
+            &CRC_32_ISO_HDLC,
+            &[chunk_type.as_bytes(), message_bytes].concat(),
+        );
+
+        println!("{}", checked);
+        assert_eq!(checked, crc);
+    }
 
     fn testing_chunk() -> Chunk {
         let data_length: u32 = 42;
@@ -278,7 +299,7 @@ mod tests {
         assert_eq!(chunk_string, expected_chunk_string);
         assert_eq!(chunk.crc(), 2882656334);
 
-        println!("chunk: {}", chunk);
+        println!("{}", chunk);
     }
 
     #[test]
