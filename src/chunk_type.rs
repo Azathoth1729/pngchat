@@ -1,4 +1,4 @@
-//! A 4-byte chunk type code.
+//! A 4-byte chunk type code of png chunk.
 //!
 //! For convenience in description and in examining PNG files,
 //! type codes are restricted to consist of uppercase and lowercase ASCII letters (A-Z and a-z, or 65-90 and 97-122 decimal).
@@ -30,7 +30,6 @@ impl ChunkType {
     }
 
     /// Returns true if the chunk is critical.
-
     pub fn is_critical(&self) -> bool {
         self.at_char(0).is_uppercase()
     }
@@ -57,26 +56,30 @@ impl ChunkType {
 }
 
 impl TryFrom<[u8; CHUNK_SIZE]> for ChunkType {
-    type Error = Error<'static>;
+    type Error = Error;
 
     fn try_from(bytes: [u8; CHUNK_SIZE]) -> Result<Self> {
         if bytes.iter().all(|&c| (c as char).is_ascii_alphabetic()) {
             Ok(Self(bytes))
         } else {
-            Err(Error::Custom("Invalid ascii character, must be alphabetic"))
+            Err(Error::Custom(
+                "Invalid ascii character, must be alphabetic".to_owned(),
+            ))
         }
     }
 }
 
 impl FromStr for ChunkType {
-    type Err = Error<'static>;
+    type Err = Error;
 
     /// Parse a value from a string, if string not valid, cast error
     fn from_str(s: &str) -> Result<Self> {
         if s.len() != CHUNK_SIZE {
-            Err(Error::Custom("Invalid length of chunk"))
+            Err(Error::Custom("Invalid length of chunk".to_owned()))
         } else if !s.chars().all(|c| c.is_ascii_alphabetic()) {
-            Err(Error::Custom("Invalid ascii character, must be alphabetic"))
+            Err(Error::Custom(
+                "Invalid ascii character, must be alphabetic".to_owned(),
+            ))
         } else {
             let mut chunk_bytes = [0; CHUNK_SIZE];
             chunk_bytes.clone_from_slice(s.as_bytes());

@@ -1,6 +1,8 @@
-//! Encrypted communication using PNG images.
+//! Hide messages in the PNG file.
 //!
-//! Inspired from by [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/introduction.html)
+//! The intent of this little project is to learn how to encode PNG file and add some messages inside it
+//!
+//! Idea come from [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/introduction.html)
 //!
 //! # Goal
 //! Making a command line program that lets you hide secret messages in PNG files.
@@ -11,34 +13,42 @@
 //! * Remove a message from a PNG file
 //! * Print a list of PNG chunks that can be searched for messages
 //!
-//! # PNG File Structure
-//! See the [PNG file structure spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html) for more details
+//! # Uasge
+//!
+//! ```bash
+//! //Encodes a message into a PNG file and saves the result
+//! pngchat encode ./test.png ruSt "This is a hidden message"
+//!
+//! // Searches for a message hidden in a PNG file and prints the message if one is found
+//! pngchat decode ./test.png ruSt
+//!
+//! // Removes a chunk from a PNG file and saves the result
+//! pngchat remove ./test.png ruSt
+//!
+//! // Prints all of the chunks in a PNG file
+//! pngchat print ./test.png
+//! ```
+//!
+//!
+//! # Links
+//! See the [PNG file structure spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html) for more details about how PNG file structured
+//!
+//! # License
 
 pub mod args;
+pub mod commands;
+
 mod chunk;
 mod chunk_type;
-mod commands;
-mod error;
-pub mod png;
+mod png;
 
-pub use chunk::Chunk;
-pub use chunk_type::ChunkType;
-pub use png::Png;
+mod error;
+mod utils;
 
 pub use error::{Error, Result};
+pub use png::Png;
 
-use crc::{Algorithm, Crc};
-
-///  Compute CRC32 using certian algorithm
-pub(crate) fn checksum_32(algo: &'static Algorithm<u32>, bytes: &[u8]) -> u32 {
-    let crc = Crc::<u32>::new(&algo);
-    crc.checksum(bytes)
-}
-
-/// Slice to Array(u8) of 4 elements
-pub(crate) fn u8_4_from_slice(arr: &[u8]) -> [u8; CHUNK_SIZE] {
-    arr.try_into().expect("Invalid slice length")
-}
+pub use utils::{checksum_32, u8_4_from_slice};
 
 /// 4 bytes size
 pub const CHUNK_SIZE: usize = 4;

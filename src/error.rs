@@ -1,6 +1,6 @@
 //! Custom error type using in pngme
 //!
-//! [`Error<'a>`] is the type used for error definition
+//! [`Error`] is the type used for error definition
 //! ```
 //! # #[allow(dead_code)]
 //! pub enum Error<'a> {
@@ -14,13 +14,14 @@
 use std::error;
 use std::fmt;
 
-pub type Result<T> = std::result::Result<T, Error<'static>>;
+/// `Result<T, Error>`
+pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 /// Enum error type for pngme
 #[derive(Debug)]
-pub enum Error<'a> {
+pub enum Error {
     /// Errors which can occur when other case
-    Custom(&'a str),
+    Custom(String),
     /// Errors which can occur when doing io operation
     IO(std::io::Error),
     /// Errors which can occur when formating
@@ -31,7 +32,7 @@ pub enum Error<'a> {
     Utf8Err(std::str::Utf8Error),
 }
 
-impl<'a> fmt::Display for Error<'a> {
+impl<'a> fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Custom(s) => write!(f, "{}", s),
@@ -43,22 +44,28 @@ impl<'a> fmt::Display for Error<'a> {
     }
 }
 
-impl<'a> From<Error<'a>> for std::fmt::Error {
+impl<'a> From<Error> for std::fmt::Error {
     fn from(_: Error) -> Self {
         std::fmt::Error
     }
 }
 
-impl<'a> From<std::str::Utf8Error> for Error<'a> {
+impl<'a> From<std::str::Utf8Error> for Error {
     fn from(e: std::str::Utf8Error) -> Self {
         Self::Utf8Err(e)
     }
 }
 
-impl<'a> From<std::string::FromUtf8Error> for Error<'a> {
+impl<'a> From<std::io::Error> for Error {
+    fn from(e: std::io::Error) -> Self {
+        Self::IO(e)
+    }
+}
+
+impl<'a> From<std::string::FromUtf8Error> for Error {
     fn from(e: std::string::FromUtf8Error) -> Self {
         Self::FromUtf8Error(e)
     }
 }
 
-impl<'a> error::Error for Error<'a> {}
+impl<'a> error::Error for Error {}

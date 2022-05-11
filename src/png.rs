@@ -1,10 +1,14 @@
 //! Implementation a full PNG file
 //!
-//! A PNG file consists of a [PNG signature](crate::Png::STANDARD_HEADER) followed by a series of [chunks](crate::Chunk).
+//! A PNG file consists of a [PNG signature](crate::Png::STANDARD_HEADER) followed by a series of [chunks](crate::chunk::Chunk).
 
 use std::fmt::Display;
+use std::fs;
+use std::path::Path;
 
-use crate::{u8_4_from_slice, Chunk};
+pub use crate::{chunk::Chunk, chunk_type::ChunkType};
+
+use crate::u8_4_from_slice;
 use crate::{Error, Result, CHUNK_SIZE};
 
 /// Header Size of png file
@@ -20,17 +24,30 @@ impl Png {
     /// 8 bytes signature of png
     pub const STANDARD_HEADER: [u8; HEADER_SIZE] = [137, 80, 78, 71, 13, 10, 26, 10];
 
-    /// Build Png from chunks
+    /// Build a `Png` from chunks
     pub fn from_chunks(chunks: Vec<Chunk>) -> Png {
         Png { chunks }
     }
 
-    /// Append a chunk to Png
+    /// Creates a `Png` from a file path
+    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Png> {
+        let file = fs::read(path)?;
+
+        Ok(file.as_slice().try_into()?)
+    }
+
+    pub fn wrtie_file<P: AsRef<Path>>(&self, path: P) -> Result<()> {
+        fs::write(path, self.as_bytes())?;
+        Ok(())
+    }
+
+    /// Append a chunk to this `Png` file's `Chunk` list
     pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk);
     }
 
-    /// Remove a chunk with certain chunk type from Png
+    /// Searches for a `Chunk` with the specified `chunk_type` and removes the first
+    /// matching `Chunk` from this `Png` list of chunks.
     pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
         let removed_idx = self
             .chunks
@@ -39,7 +56,9 @@ impl Png {
 
         match removed_idx {
             Some(idx) => Ok(self.chunks.remove(idx)),
-            None => Err(Error::Custom("Can't find certain chunk type to remove")),
+            None => Err(Error::Custom(
+                "Can't find certain chunk type to remove".to_owned(),
+            )),
         }
     }
 
@@ -53,7 +72,8 @@ impl Png {
         &self.chunks
     }
 
-    /// Find and return certain chunk type from png
+    /// Searches for a `Chunk` with the specified `chunk_type` and returns the first
+    /// matching `Chunk` from this `Png`.
     pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
         self.chunks()
             .iter()
@@ -74,11 +94,11 @@ impl Png {
 }
 
 impl TryFrom<&[u8]> for Png {
-    type Error = Error<'static>;
+    type Error = Error;
 
     fn try_from(bytes: &[u8]) -> Result<Self> {
         if &bytes[0..HEADER_SIZE] != Png::STANDARD_HEADER {
-            return Err(Error::Custom("Invalid PNG signature"));
+            return Err(Error::Custom("Invalid PNG signature".to_owned()));
         }
 
         let mut cur = HEADER_SIZE; // current position of comsuming btyes

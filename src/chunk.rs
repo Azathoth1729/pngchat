@@ -6,7 +6,7 @@
 //! The length counts only the data field, not itself, the chunk type code, or the CRC.
 //!
 //! * `Chunk Type`
-//! <br /> See [Chunk Type](crate::ChunkType) for more details.
+//! <br /> See [Chunk Type](crate::chunk_type::ChunkType) for more details.
 //!
 //! * `Chunk Data`
 //! <br /> The data bytes appropriate to the chunk type, if any. This field can be of zero length.
@@ -16,8 +16,10 @@
 //! including the chunk type code and chunk data fields, but not including the length field.
 
 use std::fmt::Display;
+use std::str::FromStr;
 
-use crate::{checksum_32, u8_4_from_slice, ChunkType};
+use crate::chunk_type::ChunkType;
+use crate::{checksum_32, u8_4_from_slice};
 use crate::{Error, Result, CHUNK_SIZE};
 
 use crc::CRC_32_ISO_HDLC;
@@ -27,7 +29,7 @@ use crc::CRC_32_ISO_HDLC;
 pub struct Chunk {
     /// A 4-byte unsigned integer giving the number of bytes in the chunk’s data field.
     length: u32,
-    /// A 4-byte chunk type code. [more](crate::ChunkType)
+    /// A 4-byte chunk type code. [more](crate::chunk_type::ChunkType)
     chunk_type: ChunkType,
     /// The data bytes appropriate to the chunk type
     chunk_data: Vec<u8>,
@@ -47,6 +49,13 @@ impl Chunk {
             chunk_data,
             crc,
         }
+    }
+
+    pub fn from_strings(chunk_type: &str, data: &str) -> Result<Chunk> {
+        let chunk_type = ChunkType::from_str(chunk_type)?;
+        let data: Vec<u8> = data.bytes().collect();
+
+        Ok(Chunk::new(chunk_type, data))
     }
 
     /// Return Length of chunk data
@@ -87,13 +96,15 @@ impl Chunk {
 }
 
 impl TryFrom<&[u8]> for Chunk {
-    type Error = Error<'static>;
+    type Error = Error;
 
     fn try_from(bytes: &[u8]) -> Result<Self> {
         let length = u32::from_be_bytes(u8_4_from_slice(&bytes[0..CHUNK_SIZE]));
 
         if bytes.len() != (length as usize + 3 * CHUNK_SIZE) as usize {
-            return Err(Error::Custom("Chunk contains incorrect length information"));
+            return Err(Error::Custom(
+                "Chunk contains incorrect length information".to_owned(),
+            ));
         }
 
         let chunk_type =
@@ -108,7 +119,7 @@ impl TryFrom<&[u8]> for Chunk {
         let to_check: Vec<u8> = [&chunk_type.bytes(), chunk_data.as_slice()].concat();
 
         if checksum_32(&CRC_32_ISO_HDLC, &to_check) != crc {
-            Err(Error::Custom("CRC checksum fails"))
+            Err(Error::Custom("CRC checksum fails".to_owned()))
         } else {
             Ok(Chunk {
                 length,

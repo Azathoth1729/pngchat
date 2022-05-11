@@ -2,9 +2,11 @@
 name = "pngchat"
 version = "0.1.0"
 edition = "2021"
-description = "Encrypted communication using PNG images"
+description = "Hide messages in the PNG file"
 authors = ["Azathoth"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 crc = "3.0"
+clap = { version = "3.1", features = ["derive"] }
+lazy_static = "1.4.0"

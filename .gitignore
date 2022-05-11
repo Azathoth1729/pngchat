@@ -1,3 +1,5 @@
 /target
 
+/assets/imgs
+
 examples/custom.rs
