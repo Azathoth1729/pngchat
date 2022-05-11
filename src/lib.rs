@@ -32,8 +32,7 @@
 //!
 //! # Links
 //! See the [PNG file structure spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html) for more details about how PNG file structured
-//!
-//! # License
+
 
 pub mod args;
 pub mod commands;

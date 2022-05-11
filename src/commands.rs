@@ -61,26 +61,22 @@ pub fn print_chunks(args: &PrintArgs) -> Result<()> {
     Ok(())
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use lazy_static::lazy_static;
     use std::path::PathBuf;
 
-    lazy_static! {
-        static ref IMG_PATH: PathBuf = [".", "assets", "imgs"].iter().collect();
-    }
-
+    const IMG_PATH: &str = "assets/imgs";
 
     fn testing_origin_path() -> PathBuf {
-        let mut path = IMG_PATH.to_path_buf();
+        let mut path: PathBuf = IMG_PATH.try_into().unwrap();
         path.push("test.png");
         path
     }
 
     fn testing_out_path() -> PathBuf {
-        let mut path = IMG_PATH.to_path_buf();
+        let mut path: PathBuf = IMG_PATH.try_into().unwrap();
+
         path.push("test_out.png");
         path
     }

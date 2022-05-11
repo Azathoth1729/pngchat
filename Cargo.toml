@@ -1,12 +1,18 @@
 [package]
 name = "pngchat"
-version = "0.1.0"
+version = "1.0.0"
+authors = ["Azathoth"]
 edition = "2021"
 description = "Hide messages in the PNG file"
-authors = ["Azathoth"]
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 crc = "3.0"
 clap = { version = "3.1", features = ["derive"] }
-lazy_static = "1.4.0"
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
