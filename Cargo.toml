@@ -4,6 +4,7 @@ version = "1.0.0"
 authors = ["Azathoth"]
 edition = "2021"
 description = "Hide messages in the PNG file"
+documentation = "https://docs.rs/pngchat"
 readme = "README.md"
 repository = "https://github.com/Azathoth1729/pngchat"
 license = "MIT"
