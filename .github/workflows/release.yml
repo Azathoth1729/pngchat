@@ -12,15 +12,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-pc-windows-gnu
-            archive: zip
           - target: x86_64-unknown-linux
             archive: tar.gz tar.xz
           - target: x86_64-apple-darwin
             archive: zip
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
       - name: Compile and release
         uses: rust-build/rust-build.action@latest
         env:
@@ -32,8 +32,8 @@ jobs:
     name: Publish to crates.io
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Publish
-      run: cargo publish --token ${CARGO_REGISTRY_TOKEN}
-      env:
-        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - uses: actions/checkout@v3
+      - name: Publish
+        run: cargo publish --token ${CARGO_REGISTRY_TOKEN}
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
