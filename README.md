@@ -20,16 +20,16 @@ The main tasks of `pngchat` are:
 ## Uasge
 
 ```bash
-//Encodes a message into a PNG file and saves the result
+# Encodes a message into a PNG file and saves the result
 pngchat encode ./test.png ruSt "This is a hidden message"
 
-// Searches for a message hidden in a PNG file and prints the message if one is found
+# Searches for a message hidden in a PNG file and prints the message if one is found
 pngchat decode ./test.png ruSt
 
-// Removes a chunk from a PNG file and saves the result
+# Removes a chunk from a PNG file and saves the result
 pngchat remove ./test.png ruSt
 
-// Prints all of the chunks in a PNG file
+# Prints all of the chunks in a PNG file
 pngchat print ./test.png
 ```
 
