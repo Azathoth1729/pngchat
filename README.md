@@ -7,15 +7,50 @@ The intent of this little project is to learn how to encode PNG file and add som
 Idea come from [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/introduction.html)
 
 ## Goal
-
 Making a command line program that lets you hide secret messages in PNG files.
 
 The main tasks of `pngchat` are:
+* Encode a message into a PNG file
+* Decode a message stored in a PNG file
+* Remove a message from a PNG file
+* Print a list of PNG chunks that can be searched for messages
 
-- Encode a message into a PNG file
-- Decode a message stored in a PNG file
-- Remove a message from a PNG file
-- Print a list of PNG chunks that can be searched for messages
+## Getting Started
+> Note:If you don't install rust toolchain, install it first from [rustup](https://rustup.rs/)
+
+First you need to make sure your rust toolchain is up to date. For the latest run
+```bash
+rustup update
+```
+
+Then you need to git clone the repo and then [cargo install local binary](https://doc.rust-lang.org/cargo/commands/cargo-install.html)
+
+```bash
+git clone https://github.com/Azathoth1729/pngchat.git
+cargo install --path .
+```
+
+Now you should be able to run commands `pngchat` directly on your terminal like:
+
+```bash
+pngchat 1.0.1
+Azathoth
+Hide messages in the PNG file
+
+USAGE:
+    pngchat <SUBCOMMAND>
+
+OPTIONS:
+    -h, --help       Print help information
+    -V, --version    Print version information
+
+SUBCOMMANDS:
+    decode    Decode the message in the specfic PNG file according to a certian chunk type
+    encode    Encode the message in the specfic PNG file with a  certian type
+    help      Print this message or the help of the given subcommand(s)
+    print     Print a list of PNG chunks that can be searched for messages
+    remove    Remove a message according to certian chunk type
+```
 
 ## Uasge
 
@@ -34,9 +69,12 @@ pngchat print ./test.png
 ```
 
 ## Links
-
 See the [PNG file structure spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html) for more details about how PNG file structured
 
-## License
+## Uninstalling
+Simply run if you install the binary from `cargo install`
+```bash
+cargo uninstall pngchat
+```
 
-This project is licensed under the [MIT license](LICENSE).
+License: MIT

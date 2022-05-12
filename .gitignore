@@ -2,4 +2,4 @@
 
 /assets/imgs
 
-examples/custom.rs
+tests/custom.rs
