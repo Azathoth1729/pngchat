@@ -1,4 +1,4 @@
-name: Lints and checks
+name: Lints and Tests
 
 on:
   push:
@@ -15,9 +15,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Build
         run: cargo build --verbose
+
       - name: Run tests
         run: cargo test --verbose
+        
       - name: Format
         run: cargo fmt --check

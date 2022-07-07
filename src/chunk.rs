@@ -80,7 +80,7 @@ impl Chunk {
 
     /// Return the data of chunk as Result<string>
     pub fn data_as_string(&self) -> Result<String> {
-        String::from_utf8(self.data().to_vec()).map_err(|e| Error::from(e))
+        String::from_utf8(self.data().to_vec()).map_err(Error::from)
     }
 
     /// Bytes representation for Chunk

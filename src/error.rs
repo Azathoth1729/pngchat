@@ -32,7 +32,7 @@ pub enum Error {
     Utf8Err(std::str::Utf8Error),
 }
 
-impl<'a> fmt::Display for Error {
+impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Custom(s) => write!(f, "{}", s),
@@ -44,28 +44,28 @@ impl<'a> fmt::Display for Error {
     }
 }
 
-impl<'a> From<Error> for std::fmt::Error {
+impl From<Error> for std::fmt::Error {
     fn from(_: Error) -> Self {
         std::fmt::Error
     }
 }
 
-impl<'a> From<std::str::Utf8Error> for Error {
+impl From<std::str::Utf8Error> for Error {
     fn from(e: std::str::Utf8Error) -> Self {
         Self::Utf8Err(e)
     }
 }
 
-impl<'a> From<std::io::Error> for Error {
+impl From<std::io::Error> for Error {
     fn from(e: std::io::Error) -> Self {
         Self::IO(e)
     }
 }
 
-impl<'a> From<std::string::FromUtf8Error> for Error {
+impl From<std::string::FromUtf8Error> for Error {
     fn from(e: std::string::FromUtf8Error) -> Self {
         Self::FromUtf8Error(e)
     }
 }
 
-impl<'a> error::Error for Error {}
+impl error::Error for Error {}

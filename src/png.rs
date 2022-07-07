@@ -32,8 +32,7 @@ impl Png {
     /// Creates a `Png` from a file path
     pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Png> {
         let file = fs::read(path)?;
-
-        Ok(file.as_slice().try_into()?)
+        file.as_slice().try_into()
     }
 
     pub fn wrtie_file<P: AsRef<Path>>(&self, path: P) -> Result<()> {
@@ -97,7 +96,7 @@ impl TryFrom<&[u8]> for Png {
     type Error = Error;
 
     fn try_from(bytes: &[u8]) -> Result<Self> {
-        if &bytes[0..HEADER_SIZE] != Png::STANDARD_HEADER {
+        if bytes[0..HEADER_SIZE] != Png::STANDARD_HEADER {
             return Err(Error::Custom("Invalid PNG signature".to_owned()));
         }
 
@@ -118,9 +117,9 @@ impl TryFrom<&[u8]> for Png {
 impl Display for Png {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "header: {:?}\nchunks:\n", Png::STANDARD_HEADER)?;
-        write!(f, "[\n")?;
+        writeln!(f, "[")?;
         for chunk in self.chunks.iter() {
-            write!(f, "{}\n", chunk)?;
+            writeln!(f, "{}", chunk)?;
         }
         write!(f, "]")?;
 
