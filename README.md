@@ -16,7 +16,8 @@ The main tasks of `pngchat` are:
 * Print a list of PNG chunks that can be searched for messages
 
 ## Getting Started
-> Note:If you don't install rust toolchain, install it first from [rustup](https://rustup.rs/)
+> Note: If you don’t have Rust yet, I recommend you use [`rustup`](https://rustup.rs/) to manage your Rust installation.
+[The official rust guide](https://doc.rust-lang.org/book/ch01-01-installation.html) has a wonderful section on getting started.
 
 First you need to make sure your rust toolchain is up to date. For the latest run
 ```bash

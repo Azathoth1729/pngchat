@@ -14,8 +14,9 @@
 //! * Print a list of PNG chunks that can be searched for messages
 //!
 //! # Getting Started
-//! > Note:If you don't install rust toolchain, install it first from [rustup](https://rustup.rs/)
-//! 
+//! > Note: If you don’t have Rust yet, I recommend you use [`rustup`](https://rustup.rs/) to manage your Rust installation.
+//! [The official rust guide](https://doc.rust-lang.org/book/ch01-01-installation.html) has a wonderful section on getting started.
+//!
 //! First you need to make sure your rust toolchain is up to date. For the latest run
 //! ```bash
 //! rustup update
@@ -29,19 +30,19 @@
 //! ```
 //!
 //! Now you should be able to run commands `pngchat` directly on your terminal like:
-//! 
+//!
 //! ```bash
 //! pngchat 1.0.1
 //! Azathoth
 //! Hide messages in the PNG file
-//! 
+//!
 //! USAGE:
 //!     pngchat <SUBCOMMAND>
-//! 
+//!
 //! OPTIONS:
 //!     -h, --help       Print help information
 //!     -V, --version    Print version information
-//! 
+//!
 //! SUBCOMMANDS:
 //!     decode    Decode the message in the specfic PNG file according to a certian chunk type
 //!     encode    Encode the message in the specfic PNG file with a  certian type
@@ -49,7 +50,7 @@
 //!     print     Print a list of PNG chunks that can be searched for messages
 //!     remove    Remove a message according to certian chunk type
 //! ```
-//! 
+//!
 //! # Uasge
 //!
 //! ```bash
@@ -65,10 +66,10 @@
 //! # Prints all of the chunks in a PNG file
 //! pngchat print ./test.png
 //! ```
-//! 
+//!
 //! # Links
 //! See the [PNG file structure spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html) for more details about how PNG file structured
-//! 
+//!
 //! # Uninstalling
 //! Simply run if you install the binary from `cargo install`
 //! ```bash
