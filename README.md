@@ -7,19 +7,23 @@ The intent of this little project is to learn how to encode PNG file and add som
 Idea come from [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/introduction.html)
 
 ## Goal
+
 Making a command line program that lets you hide secret messages in PNG files.
 
 The main tasks of `pngchat` are:
+
 * Encode a message into a PNG file
 * Decode a message stored in a PNG file
 * Remove a message from a PNG file
 * Print a list of PNG chunks that can be searched for messages
 
 ## Getting Started
+
 > Note: If you don’t have Rust yet, I recommend you use [`rustup`](https://rustup.rs/) to manage your Rust installation.
 [The official rust guide](https://doc.rust-lang.org/book/ch01-01-installation.html) has a wonderful section on getting started.
 
 First you need to make sure your rust toolchain is up to date. For the latest run
+
 ```bash
 rustup update
 ```
@@ -28,6 +32,7 @@ Then you need to git clone the repo and then [cargo install local binary](https:
 
 ```bash
 git clone https://github.com/Azathoth1729/pngchat.git
+cd pngchat
 cargo install --path .
 ```
 
@@ -70,10 +75,13 @@ pngchat print ./test.png
 ```
 
 ## Links
+
 See the [PNG file structure spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html) for more details about how PNG file structured
 
 ## Uninstalling
+
 Simply run if you install the binary from `cargo install`
+
 ```bash
 cargo uninstall pngchat
 ```
